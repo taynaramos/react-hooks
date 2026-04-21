@@ -3,30 +3,29 @@
 
 import * as React from 'react'
 
+const initialSquares = Array(9).fill(null);
+
 function Board() {
-  const [squares, setSquares] = React.useState(Array(9).fill(null))
-  const [nextValue, setNextValue] = React.useState('X');
-  const [winner, setWinner] = React.useState(null);
+
+  const [squares, setSquares] = React.useState(initialSquares)
+
+  const nextValue = calculateNextValue(squares);
+  const winner = calculateWinner(squares);
+  const status = calculateStatus(winner, squares, nextValue);
+
 
   function selectSquare(square) {
-    if (squares[square] || calculateWinner(squares)) {
+    if (squares[square] || winner) {
       return;
     }
 
     let squaresCopy = [...squares]
     squaresCopy[square] = nextValue
-
     setSquares(squaresCopy)
-
-    setNextValue(calculateNextValue(squaresCopy))
-    setWinner(calculateWinner(squaresCopy))
-
   }
 
   function restart() {
-    setSquares(Array(9).fill(null));
-    setNextValue('X')
-    setWinner(null)
+    setSquares(initialSquares);
   }
 
   function renderSquare(i) {
@@ -42,8 +41,7 @@ function Board() {
 
   return (
     <div>
-      {/* 🐨 put the status in the div below */}
-      <div className="status">{calculateStatus(winner, squares, nextValue)}</div>
+      <div className="status">{status}</div>
       <div className="board-row">
         {renderSquare(0)}
         {renderSquare(1)}
