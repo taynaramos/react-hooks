@@ -3,37 +3,42 @@
 
 import * as React from 'react'
 
-const initialSquares = Array(9).fill(null);
+const initialSquares = () => {
+  const squaresInLocalStorage = window.localStorage.getItem('squares')
+
+  if (squaresInLocalStorage) {
+    return JSON.parse(squaresInLocalStorage)
+  }
+
+  return Array(9).fill(null)
+}
 
 function Board() {
+  const [squares, setSquares] = React.useState(() => initialSquares())
 
-  const [squares, setSquares] = React.useState(initialSquares)
-
-  const nextValue = calculateNextValue(squares);
-  const winner = calculateWinner(squares);
-  const status = calculateStatus(winner, squares, nextValue);
-
+  const nextValue = calculateNextValue(squares)
+  const winner = calculateWinner(squares)
+  const status = calculateStatus(winner, squares, nextValue)
 
   function selectSquare(square) {
     if (squares[square] || winner) {
-      return;
+      return
     }
 
     let squaresCopy = [...squares]
     squaresCopy[square] = nextValue
     setSquares(squaresCopy)
+    window.localStorage.setItem('squares', JSON.stringify(squaresCopy, null))
   }
 
   function restart() {
-    setSquares(initialSquares);
+    setSquares(Array(9).fill(null))
+    window.localStorage.removeItem('squares')
   }
 
   function renderSquare(i) {
     return (
-      <button
-        className="square"
-        onClick={() => selectSquare(i)}
-      >
+      <button className="square" onClick={() => selectSquare(i)}>
         {squares[i]}
       </button>
     )
