@@ -8,7 +8,21 @@ import VanillaTilt from 'vanilla-tilt'
 function Tilt({children}) {
   // 🐨 create a ref here with React.useRef()
 
+  const tiltRef = React.useRef()
+
   // 🐨 add a `React.useEffect` callback here and use VanillaTilt to make your
+
+  React.useEffect(() => {
+    const tiltNode = tiltRef.current
+    VanillaTilt.init(tiltNode, {
+      max: 25,
+      speed: 400,
+      glare: true,
+      'max-glare': 0.5,
+    })
+    return () => tiltNode.vanillaTilt.destroy()
+  }, [])
+
   // div look fancy.
   // 💰 like this:
   // const tiltNode = tiltRef.current
@@ -29,7 +43,7 @@ function Tilt({children}) {
 
   // 🐨 add the `ref` prop to the `tilt-root` div here:
   return (
-    <div className="tilt-root">
+    <div className="tilt-root" ref={tiltRef}>
       <div className="tilt-child">{children}</div>
     </div>
   )
