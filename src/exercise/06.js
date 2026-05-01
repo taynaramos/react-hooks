@@ -44,7 +44,7 @@ const REQ_STATUS = {
 
 function PokemonInfo({pokemonName}) {
   const [state, setState] = React.useState({
-    status: REQ_STATUS.IDLE,
+    status: pokemonName ? REQ_STATUS.PENDING : REQ_STATUS.IDLE,
     pokemon: null,
     error: null,
   })
@@ -106,12 +106,19 @@ function App() {
     setPokemonName(newPokemonName)
   }
 
+  function handleReset() {
+    setPokemonName('')
+  }
+
   return (
     <div className="pokemon-info-app">
       <PokemonForm pokemonName={pokemonName} onSubmit={handleSubmit} />
       <hr />
       <div className="pokemon-info">
-        <PokemonErrorBoundary resetKeys={[pokemonName]}>
+        <PokemonErrorBoundary
+          resetKeys={[pokemonName]}
+          onReset={handleReset}
+        >
           <PokemonInfo pokemonName={pokemonName} />
         </PokemonErrorBoundary>
       </div>
