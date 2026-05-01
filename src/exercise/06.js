@@ -21,26 +21,26 @@ const REQ_STATUS = {
 }
 
 function PokemonInfo({pokemonName}) {
-  const [pokemon, setPokemon] = React.useState(null)
-  const [error, setError] = React.useState(null)
-  const [status, setStatus] = React.useState(REQ_STATUS.IDLE)
+  const [state, setState] = React.useState({
+    status: REQ_STATUS.IDLE,
+    pokemon: null,
+    error: null
+  })
 
   React.useEffect(() => {
     if (pokemonName) {
-      setStatus(REQ_STATUS.PENDING)
+      setState(s => ({...s, status: REQ_STATUS.PENDING}))
       fetchPokemon(pokemonName)
         .then(res => {
-          setPokemon(res)
-          setStatus(REQ_STATUS.RESOLVED)
+          setState({status: REQ_STATUS.RESOLVED, pokemon: res})
         })
         .catch(err => {
-          setError(err)
-          setStatus(REQ_STATUS.REJECTED)
+          setState(s => ({...s, status: REQ_STATUS.REJECTED, error: err}))
         })
     }
   }, [pokemonName])
 
-  switch (status) {
+  switch (state.status) {
     case REQ_STATUS.IDLE:
       return <div>Submit a pokemon</div>
 
@@ -48,13 +48,13 @@ function PokemonInfo({pokemonName}) {
       return <PokemonInfoFallback name={pokemonName} />
 
     case REQ_STATUS.RESOLVED:
-      return <PokemonDataView pokemon={pokemon} />
+      return <PokemonDataView pokemon={state.pokemon} />
 
     case REQ_STATUS.REJECTED:
       return (
         <div role="alert">
           There was an error:{' '}
-          <pre style={{whiteSpace: 'normal'}}>{error.message}</pre>
+          <pre style={{whiteSpace: 'normal'}}>{state.error.message}</pre>
         </div>
       )
 
