@@ -106,15 +106,18 @@ function App() {
   }
 
   return (
-    <ErrorBoundary fallback={<div>ERRO PEGO PELO ERROR BOUNDARY</div>}>
-      <div className="pokemon-info-app">
-        <PokemonForm pokemonName={pokemonName} onSubmit={handleSubmit} />
-        <hr />
-        <div className="pokemon-info">
+    <div className="pokemon-info-app">
+      <PokemonForm pokemonName={pokemonName} onSubmit={handleSubmit} />
+      <hr />
+      <div className="pokemon-info">
+        <ErrorBoundary
+          fallback={<div>ERRO PEGO PELO ERROR BOUNDARY</div>}
+          key={pokemonName}
+        >
           <PokemonInfo pokemonName={pokemonName} />
-        </div>
+        </ErrorBoundary>
       </div>
-    </ErrorBoundary>
+    </div>
   )
 }
 
