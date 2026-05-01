@@ -9,6 +9,7 @@ import * as React from 'react'
 import {
   fetchPokemon,
   PokemonDataView,
+  PokemonErrorBoundary,
   PokemonForm,
   PokemonInfoFallback,
 } from '../pokemon'
@@ -110,12 +111,9 @@ function App() {
       <PokemonForm pokemonName={pokemonName} onSubmit={handleSubmit} />
       <hr />
       <div className="pokemon-info">
-        <ErrorBoundary
-          fallback={<div>ERRO PEGO PELO ERROR BOUNDARY</div>}
-          key={pokemonName}
-        >
+        <PokemonErrorBoundary key={pokemonName}>
           <PokemonInfo pokemonName={pokemonName} />
-        </ErrorBoundary>
+        </PokemonErrorBoundary>
       </div>
     </div>
   )
