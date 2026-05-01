@@ -13,6 +13,27 @@ import {
   PokemonInfoFallback,
 } from '../pokemon'
 
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = {hasError: false}
+  }
+
+  static getDerivedStateFromError(error) {
+    // Update state so the next render will show the fallback UI.
+    return {hasError: true}
+  }
+
+  render() {
+    if (this.state.hasError) {
+      // You can render any custom fallback UI
+      return this.props.fallback
+    }
+
+    return this.props.children
+  }
+}
+
 const REQ_STATUS = {
   IDLE: 'idle',
   PENDING: 'pending',
@@ -24,7 +45,7 @@ function PokemonInfo({pokemonName}) {
   const [state, setState] = React.useState({
     status: REQ_STATUS.IDLE,
     pokemon: null,
-    error: null
+    error: null,
   })
 
   React.useEffect(() => {
@@ -51,15 +72,10 @@ function PokemonInfo({pokemonName}) {
       return <PokemonDataView pokemon={state.pokemon} />
 
     case REQ_STATUS.REJECTED:
-      return (
-        <div role="alert">
-          There was an error:{' '}
-          <pre style={{whiteSpace: 'normal'}}>{state.error.message}</pre>
-        </div>
-      )
+      throw Error('Testing error boundary component')
 
     default:
-      throw new Error('that should be impossible')
+      throw Error('that should be impossible')
   }
 
   // 🐨 Have state for the pokemon (null)
@@ -90,13 +106,15 @@ function App() {
   }
 
   return (
-    <div className="pokemon-info-app">
-      <PokemonForm pokemonName={pokemonName} onSubmit={handleSubmit} />
-      <hr />
-      <div className="pokemon-info">
-        <PokemonInfo pokemonName={pokemonName} />
+    <ErrorBoundary fallback={<div>ERRO PEGO PELO ERROR BOUNDARY</div>}>
+      <div className="pokemon-info-app">
+        <PokemonForm pokemonName={pokemonName} onSubmit={handleSubmit} />
+        <hr />
+        <div className="pokemon-info">
+          <PokemonInfo pokemonName={pokemonName} />
+        </div>
       </div>
-    </div>
+    </ErrorBoundary>
   )
 }
 
